@@ -4,6 +4,9 @@ Unofficial ARM builds of NGINX on Windows.
 ## Compiler
 Clang LLVM 16.0.6
 
+## Target
+Windows ARM
+
 ## Build
 MacBook Pro M1
 
