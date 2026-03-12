@@ -8,7 +8,7 @@ os.makedirs('/nginx-build', exist_ok=True)
 os.chdir('/nginx-build')
 
 TARGET_HOST = 'aarch64-w64-mingw32'
-NGINX_VERSION = '1.29.3'
+NGINX_VERSION = '1.29.4'
 PCRE_VERSION = '8.45'
 LIBRESSL_VERSION = '3.8.4'
 LIBZ_VERSION = '1.3.2'
