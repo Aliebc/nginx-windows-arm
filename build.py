@@ -39,20 +39,38 @@ try:
     subprocess.run([f'{TARGET_HOST}-gcc', '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 except Exception:
     print(f"'{TARGET_HOST}-gcc' is not installed. Installing.")
+
     DOWNLOAD_URL = f'https://github.com/mstorsjo/llvm-mingw/releases/download/20260311/llvm-mingw-20260311-ucrt-ubuntu-22.04-{HOST_ARCH}.tar.xz'
     INSTALL_DIR = '/usr/local/llvm-mingw'
+
     with tempfile.TemporaryDirectory() as tmpdir:
         archive_path = os.path.join(tmpdir, 'llvm-mingw.tar.xz')
+
         subprocess.run(['curl', '-L', '-o', archive_path, DOWNLOAD_URL], check=True)
         subprocess.run(['tar', '-xf', archive_path, '-C', tmpdir], check=True)
-        extracted_dir = os.path.join(tmpdir, os.listdir(tmpdir)[0])
+
+        # Find extracted directory
+        extracted_dir = None
+        for name in os.listdir(tmpdir):
+            path = os.path.join(tmpdir, name)
+            if os.path.isdir(path) and name.startswith("llvm-mingw"):
+                extracted_dir = path
+                break
+
+        if extracted_dir is None:
+            raise RuntimeError("Failed to locate extracted llvm-mingw directory")
+
+        os.makedirs(INSTALL_DIR, exist_ok=True)
+
         for item in os.listdir(extracted_dir):
             src = os.path.join(extracted_dir, item)
-            os.makedirs(INSTALL_DIR, exist_ok=True)
             dst = os.path.join(INSTALL_DIR, item)
+
             if os.path.exists(dst):
                 continue
+
             subprocess.run(['sudo', 'mv', src, dst], check=True)
+
         os.environ['PATH'] = f"{INSTALL_DIR}/bin:" + os.environ['PATH']
         
 try:
