@@ -285,6 +285,7 @@ except subprocess.CalledProcessError as e:
     
 # Replace the built binary with the official one
 try:
+    os.remove(f'nginx-{NGINX_VERSION}/nginx.exe')
     shutil.copy('objs/nginx.exe', f'nginx-{NGINX_VERSION}/nginx.exe')
     print(f'[NGINX Builder] Replaced the official Nginx binary with the built one successfully.')
 except Exception as e:
