@@ -280,6 +280,9 @@ try:
 except subprocess.CalledProcessError as e:
     print(f'[NGINX Builder] Error: Failed to compress the final output. Please check the output for details.')
     print(e)
+    
+shutil.copy(f'nginx-{NGINX_VERSION}-windows-aarch64.zip', f'/nginx-{NGINX_VERSION}-windows-aarch64.zip')
+print(f'[NGINX Builder] Final output copied to /nginx-{NGINX_VERSION}-windows-aarch64.zip')
 
 exit(0)
 ##### Clean all build files

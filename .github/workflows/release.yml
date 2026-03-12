@@ -1,0 +1,50 @@
+name: Build and Release NGINX Windows ARM
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3 \
+            curl \
+            unzip \
+            zip \
+            build-essential
+
+      - name: Run build script
+        run: |
+          sudo python3 build.py
+
+      - name: Verify artifact
+        run: |
+          ls -lh /nginx-${{ steps.version.outputs.version }}-windows-aarch64.zip
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: NGINX ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          files: /nginx-${{ steps.version.outputs.version }}-windows-aarch64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
